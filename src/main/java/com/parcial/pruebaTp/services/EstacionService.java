@@ -28,6 +28,13 @@ public class EstacionService {
         return optionalEstacion.map(this::convertToDto).orElse(null);
     }
 
+    public Estacion findEntityById(Long id) {
+        Optional<Estacion> optionalEstacion = estacionRepository.findById(id);
+        if (optionalEstacion.isPresent()) return optionalEstacion.get();
+        else return null;
+    }
+
+
 
     public EstacionDto save(EstacionDto estacionDto) {
         Estacion estacion = convertToEntity(estacionDto);
