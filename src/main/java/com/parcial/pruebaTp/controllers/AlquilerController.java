@@ -24,17 +24,18 @@ public class AlquilerController {
     private AlquilerService alquilerService;
 
     @GetMapping
-    public ResponseEntity<List<AlquilerDto>> getAll() {
-        List<AlquilerDto> alquilerDtos = alquilerService.findAll();
+    public ResponseEntity<List<AlquilerDto>> getAll(@RequestParam(required = false) Long estado ) {
+
+        List<AlquilerDto> alquilerDtos = alquilerService.findAllFiltroEstado(estado);
         return ResponseEntity.ok(alquilerDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AlquilerDto> getNearest(@PathVariable  Long id)
+    public ResponseEntity<AlquilerDto> getNearest(@PathVariable  Long id, @RequestParam(required = false) String divisa)
     {
 
         try {
-            AlquilerDto alqulerDto = alquilerService.findById(id);
+            AlquilerDto alqulerDto = alquilerService.findByIdEnDivisa(id, divisa);
             return ResponseEntity.ok(alqulerDto);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -49,7 +50,7 @@ public class AlquilerController {
 
         AlquilerDto createdAlquiler = alquilerService.iniciarAlquiler(idEstacion);
 
-
+        // System.out.println(createdAlquiler);
         return ResponseEntity.ok(createdAlquiler);
     }
 
@@ -76,16 +77,46 @@ public class AlquilerController {
 
     // Aca iria el finalizar un alquiler en curso La devolucion
     // Aca tambien tendria que acceder a la API la vaina, donde seria aca?? o donde
-    @PutMapping("/{id}")
-    public ResponseEntity<AlquilerDto> update(@PathVariable Long id, @RequestBody AlquilerDto alquilerDto) {
-        try {
-            AlquilerDto updatedAlquiler = alquilerService.update(id, alquilerDto);
-            return ResponseEntity.ok(updatedAlquiler);
 
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AlquilerDto> update(@PathVariable Long id, @RequestParam Long idEstacionDestino, @RequestParam(required = false) String divisa) {
+
+        // System.out.println(divisa);
+        // AlquilerDto alquilerDto = new AlquilerDto();
+
+        AlquilerDto alquilerDto = alquilerService.finalizarAlquiler(id, idEstacionDestino, divisa);
+        
+
+        return ResponseEntity.ok(alquilerDto);
+        
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // @PutMapping("/{id}")
+    // public ResponseEntity<AlquilerDto> update(@PathVariable Long id, @RequestBody AlquilerDto alquilerDto) {
+    //     try {
+    //         AlquilerDto updatedAlquiler = alquilerService.update(id, alquilerDto);
+    //         return ResponseEntity.ok(updatedAlquiler);
+
+    //     } catch (NoSuchElementException e) {
+    //         return ResponseEntity.notFound().build();
+    //     }
+    // }
 
 
 

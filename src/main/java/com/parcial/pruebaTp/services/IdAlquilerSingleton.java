@@ -1,14 +1,26 @@
 package com.parcial.pruebaTp.services;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
+
+import com.parcial.pruebaTp.models.Alquiler;
+import com.parcial.pruebaTp.repositories.AlquilerRepository;
+
 
 @Service
 public class IdAlquilerSingleton {
+
+
+
     private long idAlquiler;
     private static IdAlquilerSingleton instancia;
 
-    IdAlquilerSingleton () {
-        idAlquiler = 1;
+
+    IdAlquilerSingleton (AlquilerRepository alquilerRepository) {
+        Optional<Alquiler> optional = alquilerRepository.findTopByOrderByIdDesc();
+        if (optional.isPresent()) idAlquiler = optional.get().getId();
+        else idAlquiler = 1;
     }
 
     public long getIdAlquiler() {
@@ -19,9 +31,9 @@ public class IdAlquilerSingleton {
         idAlquiler += 1;
     }
 
-    public IdAlquilerSingleton getInstancia(){
+    public static IdAlquilerSingleton getInstancia(AlquilerRepository alquilerRepository){
         if (instancia == null) {
-            instancia = new IdAlquilerSingleton();
+            instancia = new IdAlquilerSingleton(alquilerRepository);
         }
         return instancia;
     }

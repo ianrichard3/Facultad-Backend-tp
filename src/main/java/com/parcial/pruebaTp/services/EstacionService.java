@@ -18,6 +18,8 @@ public class EstacionService {
     @Autowired
     private EstacionRepository estacionRepository;
 
+    private double distanciaPorGrado = 110000;
+
     public List<EstacionDto> findAll() {
         List<Estacion> estacionList = estacionRepository.findAll();
         return estacionList.stream().map(this::convertToDto).toList();
@@ -105,6 +107,14 @@ public class EstacionService {
 
 
 
+
+    public double distanceBetweenStations(Estacion e1, Estacion e2) {
+        Point2D e1Location = new Point2D(e1.getLatitud(), e1.getLongitud());
+        Point2D e2Location = new Point2D(e2.getLatitud(), e2.getLongitud());
+
+        double distance = Point2D.distanceBetweenPoints(e1Location, e2Location);
+        return distance * distanciaPorGrado;
+    }
 
 
 

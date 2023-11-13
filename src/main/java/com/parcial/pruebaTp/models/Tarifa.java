@@ -1,6 +1,7 @@
 package com.parcial.pruebaTp.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,16 +25,16 @@ public class Tarifa {
     private String definicion;
 
     @Column(name = "dia_semana")
-    private long diaSemana;
+    private Integer diaSemana;
 
     @Column(name = "dia_mes")
-    private long diaMes;
+    private Integer diaMes;
 
     @Column(name = "mes")
-    private long mes;
+    private Integer mes;
 
-    @Column(name = "anio")
-    private long anio;
+    @Column(name = "anio", nullable = true)
+    private Integer anio;
 
     @Column(name = "monto_fijo_alquiler")
     private double montoFijoAlquiler;
