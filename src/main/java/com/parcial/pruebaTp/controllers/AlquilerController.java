@@ -8,6 +8,7 @@ import com.parcial.pruebaTp.services.AlquilerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,21 +18,21 @@ import java.util.NoSuchElementException;
 
 
 @RestController
-@RequestMapping("/api/alquileres")
+@RequestMapping("/")
 public class AlquilerController {
 
     @Autowired
     private AlquilerService alquilerService;
 
-    @GetMapping
-    public ResponseEntity<List<AlquilerDto>> getAll(@RequestParam(required = false) Long estado ) {
+    @GetMapping("/protegido-usuarios/alquileres")
+    public ResponseEntity<List<AlquilerDto>> getAll(@RequestParam(required = false) Long estado, Authentication auth) {
 
         List<AlquilerDto> alquilerDtos = alquilerService.findAllFiltroEstado(estado);
         return ResponseEntity.ok(alquilerDtos);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<AlquilerDto> getNearest(@PathVariable  Long id, @RequestParam(required = false) String divisa)
+    @GetMapping("/protegido-administradores/alquileres/{id}")
+    public ResponseEntity<AlquilerDto> getNearest(Authentication auth, @PathVariable  Long id, @RequestParam(required = false) String divisa)
     {
 
         try {
@@ -45,8 +46,8 @@ public class AlquilerController {
 
     // Aca iria el iniciar el alquiler de una biciletra desde una estacion dada
 
-    @PostMapping
-    public ResponseEntity<AlquilerDto> add(@RequestParam Long idEstacion){
+    @PostMapping("/protegido-usuarios/alquileres")
+    public ResponseEntity<AlquilerDto> add(Authentication auth, @RequestParam Long idEstacion){
 
         AlquilerDto createdAlquiler = alquilerService.iniciarAlquiler(idEstacion);
 
@@ -79,8 +80,8 @@ public class AlquilerController {
     // Aca tambien tendria que acceder a la API la vaina, donde seria aca?? o donde
 
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AlquilerDto> update(@PathVariable Long id, @RequestParam Long idEstacionDestino, @RequestParam(required = false) String divisa) {
+    @PutMapping("/protegido-usuarios/alquileres/{id}")
+    public ResponseEntity<AlquilerDto> update(@PathVariable Long id, @RequestParam Long idEstacionDestino, @RequestParam(required = false) String divisa, Authentication auth) {
 
         // System.out.println(divisa);
         // AlquilerDto alquilerDto = new AlquilerDto();

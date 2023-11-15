@@ -14,17 +14,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+
 
 
 @RestController
-@RequestMapping("/api/estaciones")
+@RequestMapping("/")
 public class EstacionController {
 
     @Autowired
     private EstacionService estacionService;
 
-    @GetMapping
-    public ResponseEntity<List<EstacionDto>> getAll() {
+    // @PreAuthorize("hasRole('USUARIOS')")
+    @GetMapping("/protegido-usuarios/estaciones")
+    public ResponseEntity<List<EstacionDto>> getAll(Authentication auth) {
+
+        System.out.println(auth.getAuthorities().iterator().next().getAuthority());
         List<EstacionDto> estacionDtos = estacionService.findAll();
         return ResponseEntity.ok(estacionDtos);
     }
@@ -34,8 +40,8 @@ public class EstacionController {
         Consultar los datos de la estación más cercana a una ubicación provista por el
         cliente.
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<EstacionDto> getNearest(
+    @GetMapping("/protegido-administradores/estaciones/{id}")
+    public ResponseEntity<EstacionDto> getNearest(Authentication auth, 
         @PathVariable  Long id,  
     @RequestBody UbicacionDto ubicacionDto) {
 
@@ -50,8 +56,8 @@ public class EstacionController {
 
     }
 
-    @PostMapping
-    public ResponseEntity<EstacionDto> add(@RequestBody EstacionDto estacionDto) {
+    @PostMapping("/protegido-administradores/estaciones")
+    public ResponseEntity<EstacionDto> add(@RequestBody EstacionDto estacionDto, Authentication auth) {
 
         try {
             EstacionDto addedEstacion = estacionService.save(estacionDto);
@@ -61,8 +67,8 @@ public class EstacionController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<EstacionDto> delete(@PathVariable Long id) {
+    @DeleteMapping("/protegido-administradores/estaciones/{id}")
+    public ResponseEntity<EstacionDto> delete(Authentication auth, @PathVariable Long id) {
 
         try {
             EstacionDto deletedEstacion = estacionService.deleteById(id);
